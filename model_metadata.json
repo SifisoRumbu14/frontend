@@ -1,0 +1,86 @@
+{
+  "model_name": "HeartAttack-Mobile",
+  "version": "1.0",
+  "input_shape": [
+    1,
+    26
+  ],
+  "features": [
+    "age",
+    "gender",
+    "region",
+    "income_level",
+    "hypertension",
+    "diabetes",
+    "cholesterol_level",
+    "obesity",
+    "waist_circumference",
+    "family_history",
+    "smoking_status",
+    "physical_activity",
+    "dietary_habits",
+    "air_pollution_exposure",
+    "stress_level",
+    "sleep_hours",
+    "blood_pressure_systolic",
+    "blood_pressure_diastolic",
+    "fasting_blood_sugar",
+    "cholesterol_hdl",
+    "cholesterol_ldl",
+    "triglycerides",
+    "EKG_results",
+    "previous_heart_disease",
+    "medication_usage",
+    "participated_in_free_screening"
+  ],
+  "feature_count": 26,
+  "alcohol_consumption_removed": true,
+  "performance": {
+    "accuracy": 0.7327523827552795,
+    "precision": 0.6916742324829102,
+    "recall": 0.6018110513687134
+  },
+  "categorical_mappings": {
+    "gender": {
+      "Female": 0,
+      "Male": 1
+    },
+    "region": {
+      "Rural": 0,
+      "Urban": 1
+    },
+    "income_level": {
+      "High": 0,
+      "Low": 1,
+      "Middle": 2
+    },
+    "smoking_status": {
+      "Current": 0,
+      "Never": 1,
+      "Past": 2
+    },
+    "physical_activity": {
+      "High": 0,
+      "Low": 1,
+      "Moderate": 2
+    },
+    "dietary_habits": {
+      "Healthy": 0,
+      "Unhealthy": 1
+    },
+    "air_pollution_exposure": {
+      "High": 0,
+      "Low": 1,
+      "Moderate": 2
+    },
+    "stress_level": {
+      "High": 0,
+      "Low": 1,
+      "Moderate": 2
+    },
+    "EKG_results": {
+      "Abnormal": 0,
+      "Normal": 1
+    }
+  }
+}
