@@ -116,7 +116,7 @@ scaler_path = os.path.join(BASE_DIR, "scaler.pkl")
 if os.path.exists(scaler_path):
     try:
         scaler = joblib.load(scaler_path)
-        logger.info("✅ Scaler loaded successfully")
+        logger.info(" Scaler loaded successfully")
     except Exception as e:
         logger.warning(f"Could not load scaler: {e}")
 
@@ -147,7 +147,7 @@ try:
             'expected_features': 31,
             'type': 'desktop'
         }
-        logger.info(f"✅ Desktop PyTorch {name.upper()} loaded")
+        logger.info(f" Desktop PyTorch {name.upper()} loaded")
             
 except Exception as e:
     logger.error(f"Failed to load desktop PyTorch models: {e}")
@@ -171,9 +171,9 @@ try:
                 'expected_features': 31,
                 'type': 'mobile'
             }
-            logger.info(f"✅ Mobile PyTorch {name.upper()} loaded")
+            logger.info(f" Mobile PyTorch {name.upper()} loaded")
         else:
-            logger.warning(f"⚠️ Mobile PyTorch {name} file not found: {filename}")
+            logger.warning(f" Mobile PyTorch {name} file not found: {filename}")
             
 except Exception as e:
     logger.warning(f"Failed to load mobile PyTorch models: {e}")
@@ -196,9 +196,9 @@ try:
                 'expected_features': 26,
                 'type': 'desktop'
             }
-            logger.info(f"✅ Desktop TensorFlow {name.upper()} loaded")
+            logger.info(f" Desktop TensorFlow {name.upper()} loaded")
         else:
-            logger.warning(f"⚠️ Desktop TensorFlow {name} file not found: {filename}")
+            logger.warning(f" Desktop TensorFlow {name} file not found: {filename}")
             
 except Exception as e:
     logger.error(f"Failed to load desktop TensorFlow models: {e}")
@@ -233,7 +233,7 @@ try:
                         'expected_features': 26,
                         'type': 'tflite'
                     }
-                    logger.info(f"✅ Mobile TensorFlow Lite {model_type.upper()} loaded: {filename}")
+                    logger.info(f" Mobile TensorFlow Lite {model_type.upper()} loaded: {filename}")
                     model_loaded = True
                     break
                 except Exception as e:
@@ -241,11 +241,11 @@ try:
                     continue
         
         if not model_loaded:
-            logger.warning(f"⚠️ No TFLite model found for {model_type}. Tried: {filename_list}")
+            logger.warning(f" No TFLite model found for {model_type}. Tried: {filename_list}")
     
     # If no TFLite models found, fallback to using desktop models for mobile
     if not models_info['mobile']['tensorflow']:
-        logger.info("🔄 No TFLite models found, using desktop TensorFlow models for mobile as fallback")
+        logger.info(" No TFLite models found, using desktop TensorFlow models for mobile as fallback")
         for name in desktop_tf_files.keys():
             if name in desktop_tf_models:
                 models_info['mobile']['tensorflow'][name] = {
@@ -253,13 +253,13 @@ try:
                     'expected_features': 26,
                     'type': 'desktop_fallback'
                 }
-                logger.info(f"🔄 Using desktop TensorFlow {name.upper()} as mobile fallback")
+                logger.info(f" Using desktop TensorFlow {name.upper()} as mobile fallback")
             
 except Exception as e:
     logger.error(f"Failed to load mobile TensorFlow models: {e}")
 
 # Log final model status
-logger.info("📊 Final Model Loading Status:")
+logger.info(" Final Model Loading Status:")
 for device_type in ['desktop', 'mobile']:
     for framework in ['pytorch', 'tensorflow']:
         count = len(models_info[device_type][framework])
@@ -392,17 +392,17 @@ def ensemble_predict(features_dict: Dict[str, Any], framework: str, device_type:
             predictions.append(pred)
             individual_predictions[model_type] = pred
             successful_models.append(model_type)
-            logger.info(f"✅ {device_type.upper()} {framework.upper()} {model_type.upper()}: {pred:.6f}")
+            logger.info(f" {device_type.upper()} {framework.upper()} {model_type.upper()}: {pred:.6f}")
             
         except Exception as e:
-            logger.warning(f"❌ {device_type.upper()} {framework.upper()} {model_type} failed: {e}")
+            logger.warning(f" {device_type.upper()} {framework.upper()} {model_type} failed: {e}")
             individual_predictions[model_type] = None
     
     if not predictions:
         raise ValueError(f"All {device_type} {framework} models failed")
     
     ensemble_prediction = sum(predictions) / len(predictions)
-    logger.info(f"📊 {device_type.upper()} {framework.upper()} Ensemble: {ensemble_prediction:.6f}")
+    logger.info(f" {device_type.upper()} {framework.upper()} Ensemble: {ensemble_prediction:.6f}")
     
     return {
         "ensemble_prediction": ensemble_prediction,
@@ -424,7 +424,7 @@ async def predict(request: PredictRequest, fastapi_request: Request):
     user_agent = fastapi_request.headers.get('user-agent', '')
     device_type = detect_device_type(user_agent)
     
-    logger.info(f"🚀 Prediction request - Device: {device_type}, Framework: {framework}")
+    logger.info(f" Prediction request - Device: {device_type}, Framework: {framework}")
 
     try:
         # Validate features
@@ -456,11 +456,11 @@ async def predict(request: PredictRequest, fastapi_request: Request):
             "note": f"Using {device_type} models - ensemble of {len(ensemble_result['models_used'])} models"
         }
 
-        logger.info(f"✅ {device_type.upper()} prediction successful")
+        logger.info(f" {device_type.upper()} prediction successful")
         return result
 
     except Exception as e:
-        logger.error(f"❌ {device_type.upper()} prediction failed: {e}")
+        logger.error(f" {device_type.upper()} prediction failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/predict/force-desktop")
@@ -469,7 +469,7 @@ async def predict_force_desktop(request: PredictRequest):
     features_dict = request.features
     framework = request.framework
 
-    logger.info(f"🖥️ Forced desktop prediction - Framework: {framework}")
+    logger.info(f" Forced desktop prediction - Framework: {framework}")
 
     try:
         ensemble_result = ensemble_predict(features_dict, framework, "desktop")
@@ -494,7 +494,7 @@ async def predict_force_desktop(request: PredictRequest):
         }
 
     except Exception as e:
-        logger.error(f"❌ Forced desktop prediction failed: {e}")
+        logger.error(f" Forced desktop prediction failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/predict/force-mobile")
@@ -503,7 +503,7 @@ async def predict_force_mobile(request: PredictRequest):
     features_dict = request.features
     framework = request.framework
 
-    logger.info(f"📱 Forced mobile prediction - Framework: {framework}")
+    logger.info(f" Forced mobile prediction - Framework: {framework}")
 
     try:
         ensemble_result = ensemble_predict(features_dict, framework, "mobile")
@@ -528,7 +528,7 @@ async def predict_force_mobile(request: PredictRequest):
         }
 
     except Exception as e:
-        logger.error(f"❌ Forced mobile prediction failed: {e}")
+        logger.error(f" Forced mobile prediction failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/health")
